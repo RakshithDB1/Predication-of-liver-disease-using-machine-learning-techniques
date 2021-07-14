@@ -1,12 +1,13 @@
 import sys
 from PyQt5.uic import loadUi
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QDialog, QApplication, QWidget,QMainWindow
+from PyQt5.QtWidgets import QApplication,QMainWindow
 from PyQt5.QtGui import QPixmap
 import joblib
 import numpy as np
 from sklearn.preprocessing import StandardScaler
 import pandas as pd
+from fpdf import FPDF
 
 class Welcomepage(QMainWindow):
     def __init__(self):
@@ -49,8 +50,36 @@ class detailspage(QMainWindow):
         r=model.predict(sc.transform(data.reshape(1,-1)))
         if r:
             self.result.setText("NO RISK")
+            print(r)
         else:
             self.result.setText("RISK")
+            print(r)  
+        pdf=FPDF()
+        pdf.add_page()
+        pdf.set_font("Arial",size = 15)
+        pdf.cell(200, 10, txt = "REPORT", ln = 1, align = 'C')
+        pdf.cell(200, 10, txt = "Age:    "+str(age),ln = 3, align = 'C')
+        if male:
+            pdf.cell(200, 10, txt = "Gender:    Male",ln = 4, align = 'C')
+        if female:
+            pdf.cell(200, 10, txt = "Gender:    Female",ln = 4, align = 'C')
+        
+        pdf.cell(200, 10, txt = "TB:     "+str(TB),ln = 5, align = 'C')
+        pdf.cell(200, 10, txt = "DB:      "+str(DB),ln = 6, align = 'C')
+        pdf.cell(200, 10, txt = "alkphos     "+str(alkphos),ln = 7, align = 'C')
+        pdf.cell(200, 10, txt = "sgpt:     "+str(sgpt),ln = 8, align = 'C')
+        pdf.cell(200, 10, txt = "sgot:     "+str(sgot),ln = 9, align = 'C')
+        pdf.cell(200, 10, txt = "TP:     "+str(TP),ln = 10, align = 'C')
+        pdf.cell(200, 10, txt = "ALB:     "+str(ALB),ln = 11, align = 'C')
+        pdf.cell(200, 10, txt = "AGratio:    "+str(AGratio),ln = 12, align = 'C')
+        if r:
+            pdf.cell(200, 10, txt = "RESULT : NO RISK",ln = 14, align = 'C')
+           
+        else:
+            pdf.cell(200, 10, txt = "RESULT : RISK",ln = 14, align = 'C')
+       
+        pdf.output("REPORT.pdf") 
+        
         
         
 if __name__ == "__main__":
@@ -66,4 +95,4 @@ if __name__ == "__main__":
         except:
             print("Exiting")
 
-'''17,0.9,0.3,202,22,19,7.4,4.1,1.2'''
+
